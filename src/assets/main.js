@@ -10,7 +10,7 @@ function guess() {
 
     //Ensure user input is valid, iterate attempt if valid
     if (!validateInput(input.value)) {
-        return;
+        return false;
     } else {
         attempt.value++;
     }
@@ -20,7 +20,7 @@ function guess() {
         setMessage("You Win! :)");
         showAnswer(true);
         showReplay();
-    } else if (getResults(attempt.value >= 10)) {
+    } else if (attempt.value >= 10) {
         setMessage("You Lose! :(");
         showAnswer(false);
         showReplay();
@@ -37,7 +37,7 @@ function getResults(input) {
         if (input.charAt(i) == answer.value.charAt(i)) {
             html += '<span class="glyphicon glyphicon-ok"></span>';
             correct++;
-        } else if (answer.value.indexOf(input.charAt(i)) == true) {
+        } else if (answer.value.indexOf(input.charAt(i)) > -1) {
             html += '<span class="glyphicon glyphicon-transfer"></span>';
         } else {
             html += '<span class="glyphicon glyphicon-remove"></span>';
@@ -45,7 +45,8 @@ function getResults(input) {
     }
     html += '</div></div>';
 
-    document.getElementById(results).innerHTML += html;
+    document.getElementById('results').innerHTML += html;
+
     if (correct == input.length) {
         return true;
     } else {
