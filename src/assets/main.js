@@ -4,24 +4,28 @@ let attempt = document.getElementById('attempt');
 function guess() {
     let input = document.getElementById('user-guess');
 
-    if (answer == '' || attempt == '') {
+    if (answer.value == '' || attempt.value == '') {
         setHiddenFields();
     }
+
+    //Ensure user input is valid, iterate attempt if valid
     if (!validateInput(input.value)) {
-        return false;
+        return;
     } else {
-        attempt++;
+        attempt.value++;
     }
-    if (getResults() == true) {
+
+    //Check user input against answer and display results
+    if (getResults(input.value)) {
         setMessage("You Win! :)");
         showAnswer(true);
         showReplay();
-    } else if (getResults() == false) {
+    } else if (getResults(attempt.value >= 10)) {
         setMessage("You Lose! :(");
         showAnswer(false);
         showReplay();
     } else {
-        document.getElementById('message').innerHTML = "Incorrect, try again.";
+        setMessage("Incorrect, try again.");
     }
 }
 
@@ -29,11 +33,11 @@ function guess() {
 function getResults(input) {
     let html = '<div class="row"><span class="col-md-6">' + input + '</span><div class="col-md-6">';
     let correct = 0;
-    for (var i = 0; i < input.value.length; i++) {
-        if (input.value.charAt(i) == answer.value.charAt(i)) {
+    for (var i = 0; i < input.length; i++) {
+        if (input.charAt(i) == answer.value.charAt(i)) {
             html += '<span class="glyphicon glyphicon-ok"></span>';
             correct++;
-        } else if (answer.value.indexOf(input.value.charAt(i)) == true) {
+        } else if (answer.value.indexOf(input.charAt(i)) == true) {
             html += '<span class="glyphicon glyphicon-transfer"></span>';
         } else {
             html += '<span class="glyphicon glyphicon-remove"></span>';
@@ -41,8 +45,8 @@ function getResults(input) {
     }
     html += '</div></div>';
 
-    document.getElementById(results).innerHTML = html;
-    if (correct == 4) {
+    document.getElementById(results).innerHTML += html;
+    if (correct == input.length) {
         return true;
     } else {
         return false;
@@ -54,31 +58,24 @@ function getResults(input) {
 function setHiddenFields() {
     answer.value = Math.floor(Math.random() * 9999).toString();
     while (answer.value.length < 4) {
-        answer.value += "0" + answer.value;
+        answer.value = "0" + answer.value;
     }
-    attempt = 0;
+    attempt.value = 0;
 }
 
 function setMessage(message) {
     document.getElementById("message").innerHTML = message;
 }
 
-function validateInput(input) {
-    if (input.length == 4) {
-        return true;
-    } else {
-        setMessage("Guesses must be exactly 4 characters long.");
-        return false;
-    }
-}
 
 function showAnswer(success) {
-    document.getElementById('code').innerHTML = answer.value;
-    if (success == true) {
-        document.getElementById('code').className = ' success';
-    } else if (success == false) {
-        document.getElementById('code').className = ' failure';
+    let code = document.getElementById('code');
+    if (success) {
+        code.className = ' success';
+    } else {
+        code.className = ' failure';
     }
+    code.innerHTML = answer.value;
 }
 
 function showReplay() {
@@ -86,21 +83,11 @@ function showReplay() {
     document.getElementById('replay-div').style.display = 'block';
 }
 
-
-
-let pr = '1234';
-
-let h = '4321';
-
-console.log(h.indexOf(4));
-for (var i = 0; i < pr.length; + i++) {
-    if (pr.charAt(1) == h.charAt(1)) {
-        console.log(pr.charAt(1));
-        console.log(h.charAt(1));
-
-        console.log(a);
-        console.log('es exacto');
-    } else if (pr.indexOf(i) == true) {
-        console.log("si esta, pero no es exacto");
+function validateInput(input) {
+    if (input.length !== 4) {
+        setMessage("Guesses must be exactly 4 characters long.");
+        return false;
     }
+    return true;
+
 }
